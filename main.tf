@@ -37,14 +37,6 @@ module "common" {
   source = "./modules/common"
 }
 
-module "demo_inst" {
-  source = "./modules/demo"
-
-  inst_name = "demo_inst"
-  subnet_name  = data.google_compute_subnetwork.demo_subnet.self_link
-}
-
-
 ### Network & storage set up by supporting workspace
 # module "slurm_cluster_network" {
 #   source = "./modules/network"
