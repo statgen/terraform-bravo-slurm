@@ -39,8 +39,8 @@ locals {
     vpc_subnet                   = var.subnetwork_name
     zone                         = var.zone
   })
-  custom-controller-install = var.controller_startup_script != null? var.controller_startup_script : file("${path.module}/../../../scripts/custom-controller-install")
-  custom-compute-install = var.compute_startup_script != null? var.compute_startup_script : file("${path.module}/../../../scripts/custom-compute-install")
+  custom-controller-install = var.controller_startup_script
+  custom-compute-install = var.compute_startup_script
 }
 
 resource "google_compute_disk" "secondary" {
@@ -93,9 +93,7 @@ resource "google_compute_instance" "controller_node" {
     #   a. subnetwork_project isn't set when shared_vpc_host_project is null
     # 2. var.project / var.subnetwork_name
     # 3. var.project / {cluster_name}-{region}
-    subnetwork = (var.subnetwork_name != null
-      ? var.subnetwork_name
-    : "${var.cluster_name}-${var.region}")
+    subnetwork = (var.subnetwork_name != null ? var.subnetwork_name : "${var.cluster_name}-${var.region}")
 
     subnetwork_project = var.shared_vpc_host_project
   }
@@ -105,23 +103,25 @@ resource "google_compute_instance" "controller_node" {
     scopes = var.scopes
   }
 
-  metadata_startup_script = file("${path.module}/../../../scripts/startup.sh")
+  metadata_startup_script = var.metadata_startup_script
 
   metadata = {
     enable-oslogin = "TRUE"
     VmDnsSetting   = "GlobalOnly"
 
     config                    = local.config
-    cgroup_conf_tpl           = file("${path.module}/../../../etc/cgroup.conf.tpl")
-    custom-compute-install    = local.custom-compute-install
-    custom-controller-install = local.custom-controller-install
-    setup-script              = file("${path.module}/../../../scripts/setup.py")
-    slurm-resume              = file("${path.module}/../../../scripts/resume.py")
-    slurm-suspend             = file("${path.module}/../../../scripts/suspend.py")
-    slurm_conf_tpl            = file("${path.module}/../../../etc/slurm.conf.tpl")
-    slurmdbd_conf_tpl         = file("${path.module}/../../../etc/slurmdbd.conf.tpl")
-    slurmsync                 = file("${path.module}/../../../scripts/slurmsync.py")
-    util-script               = file("${path.module}/../../../scripts/util.py")
+
+    custom-compute-install    = var.controller_startup_script
+    custom-controller-install = var.compute_startup_script
+
+    cgroup_conf_tpl   = var.cgroup_conf_tpl
+    setup-script      = var.setup_script
+    slurm-resume      = var.slurm_resume
+    slurm-suspend     = var.slurm_suspend
+    slurm_conf_tpl    = var.slurm_conf_tpl
+    slurmdbd_conf_tpl = var.slurmdbd_conf_tpl
+    slurmsync         = var.slurmsync
+    util-script       = var.util_script
   }
 }
 
@@ -182,23 +182,23 @@ resource "google_compute_instance_from_template" "controller_node" {
     scopes = var.scopes
   }
 
-  metadata_startup_script = file("${path.module}/../../../scripts/startup.sh")
+  metadata_startup_script = var.metadata_startup_script
 
   metadata = {
     enable-oslogin = "TRUE"
     VmDnsSetting   = "GlobalOnly"
     config         = local.config
 
-    cgroup_conf_tpl           = file("${path.module}/../../../etc/cgroup.conf.tpl")
-    custom-compute-install    = local.custom-compute-install
-    custom-controller-install = local.custom-controller-install
-    setup-script              = file("${path.module}/../../../scripts/setup.py")
-    slurm-resume              = file("${path.module}/../../../scripts/resume.py")
-    slurm-suspend             = file("${path.module}/../../../scripts/suspend.py")
-    slurm_conf_tpl            = file("${path.module}/../../../etc/slurm.conf.tpl")
-    slurmdbd_conf_tpl         = file("${path.module}/../../../etc/slurmdbd.conf.tpl")
-    slurmsync                 = file("${path.module}/../../../scripts/slurmsync.py")
-    util-script               = file("${path.module}/../../../scripts/util.py")
+    custom-compute-install    = var.controller_startup_script
+    custom-controller-install = var.compute_startup_script
+    cgroup_conf_tpl   = var.cgroup_conf_tpl
+    setup-script      = var.setup_script
+    slurm-resume      = var.slurm_resume
+    slurm-suspend     = var.slurm_suspend
+    slurm_conf_tpl    = var.slurm_conf_tpl
+    slurmdbd_conf_tpl = var.slurmdbd_conf_tpl
+    slurmsync         = var.slurmsync
+    util-script       = var.util_script
   }
 }
 

@@ -166,17 +166,6 @@ variable "partitions" {
   static_node_count = number }))
 }
 
-variable "controller_startup_script" {
-  description = "Custom startup script to run on the controller"
-  type        = string
-  default     = null
-}
-
-variable "compute_startup_script" {
-  description = "Custom startup script to run on the compute nodes"
-  type        = string
-  default     = null
-}
 
 variable "project" {
   description = "Compute Platform project that will host the Slurm cluster"
@@ -249,4 +238,48 @@ output "instance_network_ips" {
 output "config" {
   value     = local.config
   sensitive = true
+}
+
+#####################################################################
+### Conents of various scripts provided to instances as metadata. ###
+#####################################################################
+
+variable "controller_startup_script" {
+  description = "Custom startup script to run on the controller"
+  type        = string
+}
+
+variable "compute_startup_script" {
+  description = "Custom startup script to run on the compute nodes"
+  type        = string
+}
+
+variable "metadata_startup_script" {
+  description = "Custom startup script to run on the compute nodes"
+  type        = string
+}
+
+variable "cgroup_conf_tpl" {
+  type = string
+}
+variable "setup_script" {
+  type = string
+}
+variable "slurm_resume" {
+  type = string
+}
+variable "slurm_suspend" {
+  type = string
+}
+variable "slurm_conf_tpl" {
+  type = string
+}
+variable "slurmdbd_conf_tpl" {
+  type = string
+}
+variable "slurmsync" {
+  type = string
+}
+variable "util_script" {
+  type = string
 }
