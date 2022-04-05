@@ -87,13 +87,6 @@ variable "partitions" {
   static_node_count = number }))
 }
 
-variable "compute_startup_script" {
-  description = "Custom startup script to run on the compute nodes"
-  type        = string
-  default     = null
-}
-
-
 variable "project" {
   description = "Cloud Platform project that hosts the notebook server(s)"
   type        = string
@@ -147,3 +140,28 @@ variable "intel_select_solution" {
   default     = null
   type        = string
 }
+
+#####################################################################
+### Conents of various scripts provided to instances as metadata. ###
+#####################################################################
+
+variable "compute_startup_script" {
+  description = "Custom startup script to run on the compute nodes"
+  type        = string
+  default     = null
+}
+
+variable "metadata_startup_script" {
+  description = "Custom startup script to run on the compute nodes"
+  type        = string
+}
+
+variable "util_script" {
+  type = string
+}
+
+variable "setup_script" {
+  type = string
+}
+
+

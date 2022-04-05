@@ -150,8 +150,24 @@ output "instance_network_ips" {
   value = google_compute_instance.login_node.*.network_interface.0.network_ip
 }
 
+#####################################################################
+### Conents of various scripts provided to instances as metadata. ###
+#####################################################################
+
 variable "login_startup_script" {
   description = "Custom startup script to run on the login node"
   type        = string
-  default     = null
+}
+
+variable "metadata_startup_script" {
+  description = "Custom startup script to run on the compute nodes"
+  type        = string
+}
+
+variable "util_script" {
+  type = string
+}
+
+variable "setup_script" {
+  type = string
 }

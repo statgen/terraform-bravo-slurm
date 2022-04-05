@@ -45,9 +45,6 @@ locals {
   template_map = {
     for static in local.static_list : static.name => static if static.template != null
   }
-
-  custom-compute-install = var.compute_startup_script != null? var.compute_startup_script : file("${path.module}/../../../scripts/custom-compute-install")
-
 }
 
 
@@ -105,14 +102,14 @@ resource "google_compute_instance" "compute_node" {
     scopes = each.value.sa_scopes
   }
 
-  metadata_startup_script = file("${path.module}/../../../scripts/startup.sh")
+  metadata_startup_script = var.metadata_startup_script
 
   metadata = {
     enable-oslogin    = "TRUE"
     VmDnsSetting      = "GlobalOnly"
     instance_type     = "compute"
     google_mpi_tuning = each.value.image_hyperthreads ? null : "--nosmt"
-    custom-compute-install    = local.custom-compute-install
+    custom-compute-install = var.compute_startup_script
 
     config = jsonencode({
       cluster_name              = var.cluster_name,
@@ -123,8 +120,8 @@ resource "google_compute_instance" "compute_node" {
       zone                      = var.zone
     })
 
-    setup-script = file("${path.module}/../../../scripts/setup.py")
-    util-script  = file("${path.module}/../../../scripts/util.py")
+    setup-script = var.setup_script
+    util-script  = var.util_script
   }
 }
 
@@ -188,14 +185,14 @@ resource "google_compute_instance_from_template" "compute_node" {
     scopes = each.value.sa_scopes
   }
 
-  metadata_startup_script = file("${path.module}/../../../scripts/startup.sh")
+  metadata_startup_script = var.metadata_startup_script
 
   metadata = {
     enable-oslogin    = "TRUE"
     VmDnsSetting      = "GlobalOnly"
     instance_type     = "compute"
     google_mpi_tuning = each.value.image_hyperthreads ? null : "--nosmt"
-    custom-compute-install    = local.custom-compute-install
+    custom-compute-install = var.compute_startup_script
 
     config = jsonencode({
       cluster_name              = var.cluster_name,
@@ -206,7 +203,7 @@ resource "google_compute_instance_from_template" "compute_node" {
       zone                      = var.zone
     })
 
-    setup-script = file("${path.module}/../../../scripts/setup.py")
-    util-script  = file("${path.module}/../../../scripts/util.py")
+    setup-script = var.setup_script
+    util-script  = var.util_script
   }
 }

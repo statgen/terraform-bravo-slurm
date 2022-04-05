@@ -15,10 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-locals {
-  custom-compute-install = var.login_startup_script != null? var.login_startup_script : file("${path.module}/../../../scripts/custom-compute-install")
-}
-
 data "google_compute_default_service_account" "default" {}
 
 resource "google_compute_instance" "login_node" {
@@ -53,9 +49,7 @@ resource "google_compute_instance" "login_node" {
     #   a. subnetwork_project isn't set when shared_vpc_host_project is null
     # 2. var.project / var.subnetwork_name
     # 3. var.project / {cluster_name}-{region}
-    subnetwork = (var.subnetwork_name != null
-      ? var.subnetwork_name
-    : "${var.cluster_name}-${var.region}")
+    subnetwork = (var.subnetwork_name != null ? var.subnetwork_name : "${var.cluster_name}-${var.region}")
 
     subnetwork_project = var.shared_vpc_host_project
   }
@@ -65,13 +59,13 @@ resource "google_compute_instance" "login_node" {
     scopes = var.scopes
   }
 
-  metadata_startup_script = file("${path.module}/../../../scripts/startup.sh")
+  metadata_startup_script = var.metadata_startup_script
 
   metadata = {
     enable-oslogin = "TRUE"
     VmDnsSetting   = "GlobalOnly"
 
-    util-script = file("${path.module}/../../../scripts/util.py")
+    util-script = var.util_script
 
     config = jsonencode({
       cluster_name              = var.cluster_name
@@ -81,9 +75,8 @@ resource "google_compute_instance" "login_node" {
       network_storage           = var.network_storage
     })
 
-    setup-script = file("${path.module}/../../../scripts/setup.py")
-    custom-compute-install    = local.custom-compute-install
-
+    setup-script                = var.setup_script
+    custom-compute-install      = var.login_startup_script
   }
 }
 
@@ -138,13 +131,13 @@ resource "google_compute_instance_from_template" "login_node" {
     scopes = var.scopes
   }
 
-  metadata_startup_script = file("${path.module}/../../../scripts/startup.sh")
+  metadata_startup_script = var.metadata_startup_script
 
   metadata = {
     enable-oslogin = "TRUE"
     VmDnsSetting   = "GlobalOnly"
 
-    util-script = file("${path.module}/../../../scripts/util.py")
+    util-script = var.util_script
 
     config = jsonencode({
       cluster_name              = var.cluster_name
@@ -154,8 +147,8 @@ resource "google_compute_instance_from_template" "login_node" {
       network_storage           = var.network_storage
     })
 
-    setup-script = file("${path.module}/../../../scripts/setup.py")
-    custom-compute-install    = local.custom-compute-install
+    setup-script                = var.setup_script
+    custom-compute-install      = var.login_startup_script
 
   }
 }
