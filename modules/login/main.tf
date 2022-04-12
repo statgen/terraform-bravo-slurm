@@ -1,3 +1,6 @@
+# Copyright 2021 University of Michigan
+# Modified for use with the Bravo data pipeline.
+#
 # Copyright 2021 SchedMD LLC
 # Modified for use with the Slurm Resource Manager.
 #
@@ -21,6 +24,7 @@ resource "google_compute_instance" "login_node" {
   count = var.instance_template == null ? var.node_count : 0
 
   depends_on = [var.subnet_depend]
+  allow_stopping_for_update = true
 
   name         = "${var.cluster_name}-login${count.index}"
   machine_type = var.machine_type
@@ -119,9 +123,7 @@ resource "google_compute_instance_from_template" "login_node" {
     #   a. subnetwork_project isn't set when shared_vpc_host_project is null
     # 2. var.project / var.subnetwork_name
     # 3. var.project / {cluster_name}-{region}
-    subnetwork = (var.subnetwork_name != null
-      ? var.subnetwork_name
-    : "${var.cluster_name}-${var.region}")
+    subnetwork = (var.subnetwork_name != null ? var.subnetwork_name : "${var.cluster_name}-${var.region}")
 
     subnetwork_project = var.shared_vpc_host_project
   }

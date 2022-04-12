@@ -150,6 +150,10 @@ output "instance_network_ips" {
   value = google_compute_instance.login_node.*.network_interface.0.network_ip
 }
 
+output "instance_nat_ips" {
+  value = google_compute_instance.login_node.*.network_interface.0.access_config.0.nat_ip
+}
+
 #####################################################################
 ### Conents of various scripts provided to instances as metadata. ###
 #####################################################################
