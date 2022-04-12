@@ -23,11 +23,17 @@ variable "project" {
 
 # Placeholders for vars of modules passed verbatim
 #   See io.tf of modules for full description.
+variable "cluster_name" {}
+
 variable "controller_machine_type" {}
 variable "controller_image"        {}
 variable "controller_disk_type"    {}
 variable "controller_disk_size_gb" {}
+variable "controller_labels"       {}
 
-variable "cluster_name" {}
-variable "partitions" {}
-variable "controller_labels" {}
+variable "login_machine_type" {}
+variable "login_node_count"   {}
+variable "login_image"        {}
+variable "login_disk_type"    {}
+variable "login_disk_size_gb" {}
+variable "login_labels"       {}

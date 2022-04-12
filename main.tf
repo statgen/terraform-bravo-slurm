@@ -1,18 +1,57 @@
 provider "google" {
   project = var.project
-  region  = var.region
+  region  = local.region
   zone    = var.zone
 }
 
 locals {
   region = join("-", slice(split("-", var.zone), 0, 2))
-  # par_map = { for item in var.partitions : item.name => item }
+
+  network_storage = [{
+    server_ip     = data.tfe_outputs.slurm_network.values.filestore_ip_home
+    remote_mount  = data.tfe_outputs.slurm_network.values.filestore_name_home
+    local_mount   = "/home"
+    fs_type       = "nfs"
+    #mount_options = "hard,timeo=600,retrans=3,rsize=1048576,wsize=1048576,resvport,async"
+    mount_options = null
+
+  },{
+    server_ip     = data.tfe_outputs.slurm_network.values.filestore_ip_app
+    remote_mount  = data.tfe_outputs.slurm_network.values.filestore_name_app
+    local_mount   = "/apps"
+    fs_type       = "nfs"
+    mount_options = "hard,timeo=600,retrans=3,rsize=1048576,wsize=1048576,resvport,async"
+  }]
+
+  partitions = [
+    { name                 = "debug"
+      machine_type         = "c2-standard-4"
+      static_node_count    = 2
+      max_node_count       = 10
+      zone                 = var.zone
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-hpc-centos-7"
+      image_hyperthreads   = true
+      compute_disk_type    = "pd-standard"
+      compute_disk_size_gb = 20
+      compute_labels       = {}
+      cpu_platform         = null
+      gpu_count            = 0
+      gpu_type             = null
+      network_storage      = []
+      preemptible_bursting = false
+      vpc_subnet           = data.google_compute_subnetwork.slurm_subnet.self_link
+      exclusive            = false
+      enable_placement     = false
+      regional_capacity    = false
+      regional_policy      = {}
+      instance_template    = null
+    }
+  ]
 }
 
-
-###########################################################
-# Get network details from supporting terraform workspace #
-###########################################################
+#############################################################
+# Get network & storage from supporting terraform workspace #
+#############################################################
 
 # To lookup filestore_ip, network_name, subnet_name
 data "tfe_outputs" "slurm_network" {
@@ -20,11 +59,11 @@ data "tfe_outputs" "slurm_network" {
   workspace = "bravo-slurm-network"
 }
 
-data "google_compute_subnetwork" "demo_network" {
+data "google_compute_subnetwork" "slurm_network" {
   name = data.tfe_outputs.slurm_network.values.network_name
 }
 
-data "google_compute_subnetwork" "demo_subnet" {
+data "google_compute_subnetwork" "slurm_subnet" {
   name = data.tfe_outputs.slurm_network.values.subnet_name
 }
 
@@ -37,23 +76,15 @@ module "common" {
   source = "./modules/common"
 }
 
-### Network & storage set up by supporting workspace
-# module "slurm_cluster_network" {
-#   source = "./modules/network"
-#
-#   cluster_name                  = var.cluster_name
-#   disable_login_public_ips      = var.disable_login_public_ips
-#   disable_controller_public_ips = var.disable_controller_public_ips
-#   disable_compute_public_ips    = var.disable_compute_public_ips
-#   network_name                  = data.google_compute_subnetwork.demo_network.self_link
-#   partitions                    = var.partitions
-#   shared_vpc_host_project       = var.shared_vpc_host_project
-#   subnetwork_name               = data.google_compute_subnetwork.demo_subnet.self_link
-#
-#   project = var.project
-#   region  = local.region
-# }
+###########
+# Network #
+###########
 
+# Network and storage provided by supporting terraform workspace
+
+##############################
+# Controller, Login, Compute #
+##############################
 module "slurm_cluster_controller" {
   source = "./modules/controller"
 
@@ -63,15 +94,9 @@ module "slurm_cluster_controller" {
   # instance_template             = var.controller_instance_template
   cluster_name                  = var.cluster_name
 
-  network_storage = [ {
-    server_ip     = data.tfe_outputs.slurm_network.values.filestore_ip
-    remote_mount  = data.tfe_outputs.slurm_network.values.filestore_share
-    local_mount   = "/home"
-    fs_type       = "nfs"
-    mount_options = "hard,timeo=600,retran=3,rsize=1048576,wsize=1048576,resvport,async"
-  }]
+  network_storage = local.network_storage
 
-  partitions                    = var.partitions
+  partitions                    = local.partitions
   project                       = var.project
   region                        = local.region
 
@@ -92,10 +117,9 @@ module "slurm_cluster_controller" {
   # shared_vpc_host_project       = var.shared_vpc_host_project
   # scopes                        = var.controller_scopes
   # service_account               = var.controller_service_account
-  # subnet_depend                 = module.slurm_cluster_network.subnet_depend
 
-  subnet_depend                 = data.google_compute_subnetwork.demo_subnet.self_link
-  subnetwork_name               = data.google_compute_subnetwork.demo_subnet.self_link
+  subnet_depend                 = data.google_compute_subnetwork.slurm_subnet.self_link
+  subnetwork_name               = data.google_compute_subnetwork.slurm_subnet.self_link
 
   # suspend_time                  = var.suspend_time
   # complete_wait_time            = var.complete_wait_time
@@ -118,13 +142,12 @@ module "slurm_cluster_controller" {
   util_script               = module.common.util_script
 }
 
-/*
 module "slurm_cluster_login" {
   source = "./modules/login"
 
   # boot_disk_size            = var.login_disk_size_gb
   # boot_disk_type            = var.login_disk_type
-  # image                     = var.login_image
+  image                     = var.login_image
   # instance_template         = var.login_instance_template
   cluster_name              = var.cluster_name
   controller_name           = module.slurm_cluster_controller.controller_node_name
@@ -133,19 +156,23 @@ module "slurm_cluster_login" {
   labels                    = var.login_labels
   # login_network_storage     = var.login_network_storage
   # machine_type              = var.login_machine_type
-  # node_count                = var.login_node_count
+  node_count                = var.login_node_count
   region                    = local.region
-  scopes                    = var.login_node_scopes
-  service_account           = var.login_node_service_account
-  munge_key                 = var.munge_key
-  network_storage           = var.network_storage
+  # scopes                    = var.login_node_scopes
+  # service_account           = var.login_node_service_account
+  # munge_key                 = var.munge_key
+  network_storage           = local.network_storage
 
-  # shared_vpc_host_project   = var.shared_vpc_host_project
-  subnet_depend             = module.slurm_cluster_network.subnet_depend
-
-  subnetwork_name           = data.google_compute_subnetwork.demo_subnet.self_link
+  subnet_depend                 = data.google_compute_subnetwork.slurm_subnet.self_link
+  subnetwork_name               = data.google_compute_subnetwork.slurm_subnet.self_link
   zone                      = var.zone
-  login_startup_script      = var.login_startup_script
+
+  ## Required Runtime Scripts
+  ##   Provided by 'common' module instead of external file refs.
+  login_startup_script      = module.common.custom_compute_install
+  metadata_startup_script   = module.common.metadata_startup_script
+  util_script = module.common.util_script
+  setup_script = module.common.setup_script
 }
 
 module "slurm_cluster_compute" {
@@ -153,20 +180,19 @@ module "slurm_cluster_compute" {
 
   cluster_name               = var.cluster_name
   controller_name            = module.slurm_cluster_controller.controller_node_name
-  # disable_compute_public_ips = var.disable_compute_public_ips
-  network_storage            = var.network_storage
-  partitions                 = var.partitions
+  network_storage            = local.network_storage
+  partitions                 = local.partitions
   project                    = var.project
   region                     = local.region
-  scopes                     = var.compute_node_scopes
-  service_account            = var.compute_node_service_account
-  # shared_vpc_host_project    = var.shared_vpc_host_project
-  subnet_depend              = module.slurm_cluster_network.subnet_depend
 
-  subnetwork_name            = data.google_compute_subnetwork.demo_subnet.self_link
+  subnet_depend              = data.google_compute_subnetwork.slurm_subnet.self_link
+  subnetwork_name            = data.google_compute_subnetwork.slurm_subnet.self_link
   zone                       = var.zone
-  intel_select_solution      = var.intel_select_solution
-  compute_startup_script     = var.compute_startup_script
-}
 
-*/
+  ## Required Runtime Scripts
+  ##   Provided by 'common' module instead of external file refs.
+  compute_startup_script     = module.common.custom_compute_install
+  metadata_startup_script    = module.common.metadata_startup_script
+  util_script                = module.common.util_script
+  setup_script               = module.common.setup_script
+}
