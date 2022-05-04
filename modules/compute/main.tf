@@ -52,6 +52,7 @@ resource "google_compute_instance" "compute_node" {
   for_each = local.compute_map
 
   depends_on = [var.subnet_depend]
+  allow_stopping_for_update = true
 
   name         = each.value.name
   machine_type = each.value.machine_type
@@ -131,6 +132,7 @@ resource "google_compute_instance_from_template" "compute_node" {
   source_instance_template = each.value.template
 
   depends_on = [var.subnet_depend]
+  allow_stopping_for_update = true
 
   name         = each.value.name
   machine_type = each.value.machine_type

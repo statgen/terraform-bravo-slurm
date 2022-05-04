@@ -58,6 +58,7 @@ resource "google_compute_instance" "controller_node" {
   count = var.instance_template == null ? 1 : 0
 
   depends_on = [var.subnet_depend]
+  allow_stopping_for_update = true
 
   name         = local.controller_name
   machine_type = var.machine_type
@@ -131,6 +132,7 @@ resource "google_compute_instance_from_template" "controller_node" {
   source_instance_template = var.instance_template
 
   depends_on = [var.subnet_depend]
+  allow_stopping_for_update = true
 
   name         = local.controller_name
   machine_type = var.machine_type

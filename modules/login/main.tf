@@ -91,6 +91,7 @@ resource "google_compute_instance_from_template" "login_node" {
   source_instance_template = var.instance_template
 
   depends_on = [var.subnet_depend]
+  allow_stopping_for_update = true
 
   name         = "${var.cluster_name}-login${count.index}"
   machine_type = var.machine_type
