@@ -29,7 +29,7 @@ locals {
       static_node_count    = 2
       max_node_count       = 10
       zone                 = var.zone
-      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-hpc-centos-7"
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
       image_hyperthreads   = true
       compute_disk_type    = "pd-standard"
       compute_disk_size_gb = 20
