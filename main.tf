@@ -115,7 +115,7 @@ module "slurm_cluster_controller" {
   # secondary_disk_size           = var.controller_secondary_disk_size
   # secondary_disk_type           = var.controller_secondary_disk_type
   # shared_vpc_host_project       = var.shared_vpc_host_project
-  scopes                          = ["monitoring-write","logging-write","storage-rw"]
+  scopes                          = ["cloud-platform", "monitoring-write","logging-write","storage-rw"]
   # service_account               = var.controller_service_account
 
   subnet_depend                 = data.google_compute_subnetwork.slurm_subnet.self_link
@@ -159,7 +159,7 @@ module "slurm_cluster_login" {
   node_count                = var.login_node_count
   region                    = local.region
   # scopes                    = var.login_node_scopes
-  scopes                      = ["monitoring-write","logging-write","storage-rw"]
+  scopes                      = ["cloud-platform", "monitoring-write","logging-write","storage-rw"]
   # service_account           = var.login_node_service_account
   # munge_key                 = var.munge_key
   network_storage           = local.network_storage
