@@ -68,7 +68,7 @@ dirs = NSDict({n: Path(p) for n, p in dict.items({
     'slurm': '/slurm',
     'prefix': '/usr/local',
     'munge': '/etc/munge',
-    'secdisk': '/mnt/disks/sec',
+    'secdisk': '/mnt/disks/sec'
 })})
 
 slurmdirs = NSDict({n: Path(p) for n, p in dict.items({
@@ -447,7 +447,7 @@ def prepare_network_mounts(hostname, instance_type):
         return mount[1].server_ip == CONTROL_MACHINE
 
     def partition(pred, coll):
-        """ filter into 2 lists based on pred returning True or False 
+        """ filter into 2 lists based on pred returning True or False
             returns ([False], [True])
         """
         return reduce(
@@ -492,8 +492,6 @@ def setup_network_storage():
             mount_options += ['_netdev']
 
         if fs_type == 'gcsfuse':
-            if 'nonempty' not in mount_options:
-                mount_options += ['nonempty']
             fstab_entries.append(
                 "{0}   {1}     {2}     {3}     0 0"
                 .format(remote_mount, local_mount, fs_type,
