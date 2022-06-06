@@ -21,10 +21,16 @@ locals {
     local_mount   = "/apps"
     fs_type       = "nfs"
     mount_options = "hard,timeo=600,retrans=3,rsize=1048576,wsize=1048576,resvport,async"
+  },{
+    server_ip     = null
+    remote_mount  = var.results_bucket
+    local_mount   = "/results"
+    fs_type       = "gcsfuse"
+    mount_options = "file_mode=766,dir_mode=777,allow_other,_netdev"
   }]
 
   partitions = [
-    { name                 = "debug"
+    { name                 = "bravo"
       machine_type         = "c2-standard-4"
       static_node_count    = 3
       max_node_count       = 3
