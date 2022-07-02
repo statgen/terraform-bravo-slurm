@@ -24,9 +24,15 @@ locals {
   },{
     server_ip     = null
     remote_mount  = var.results_bucket
-    local_mount   = "/results"
+    local_mount   = "/mnt/results"
     fs_type       = "gcsfuse"
     mount_options = "file_mode=766,dir_mode=777,allow_other,_netdev"
+  },{
+    server_ip     = null
+    remote_mount  = var.input_vcfs_bucket
+    local_mount   = "/mnt/vcfs"
+    fs_type       = "gcsfuse"
+    mount_options = "file_mode=766,dir_mode=777,allow_other,_netdev,billing_project=genome-variant-server"
   }]
 
   partitions = [
