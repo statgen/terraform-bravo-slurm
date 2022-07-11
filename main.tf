@@ -21,15 +21,27 @@ locals {
     local_mount   = "/apps"
     fs_type       = "nfs"
     mount_options = "hard,timeo=600,retrans=3,rsize=1048576,wsize=1048576,resvport,async"
+  },{
+    server_ip     = null
+    remote_mount  = var.results_bucket
+    local_mount   = "/mnt/results"
+    fs_type       = "gcsfuse"
+    mount_options = "file_mode=766,dir_mode=777,allow_other,_netdev"
+  },{
+    server_ip     = null
+    remote_mount  = var.input_vcfs_bucket
+    local_mount   = "/mnt/vcfs"
+    fs_type       = "gcsfuse"
+    mount_options = "file_mode=766,dir_mode=777,allow_other,_netdev,billing_project=genome-variant-server"
   }]
 
   partitions = [
-    { name                 = "debug"
+    { name                 = "bravo"
       machine_type         = "c2-standard-4"
-      static_node_count    = 2
-      max_node_count       = 10
+      static_node_count    = 3
+      max_node_count       = 3
       zone                 = var.zone
-      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-hpc-centos-7"
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
       image_hyperthreads   = true
       compute_disk_type    = "pd-standard"
       compute_disk_size_gb = 20
