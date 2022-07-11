@@ -18,13 +18,17 @@ variable "zone" {
 
 variable "project" {
   description = "GCP project name"
-  default     = null
+  type        = string
 }
 
 variable "results_bucket" {
   description = "GCP bucket to store pipline outputs"
   type        = string
-  default     = null
+}
+
+variable "input_vcfs_bucket" {
+  description = "GCP requestor pays bucket with source VCF files."
+  type        = string
 }
 
 # Placeholders for vars of modules passed verbatim
