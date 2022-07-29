@@ -44,8 +44,8 @@ locals {
   partitions = [
     { name                 = "bravo"
       machine_type         = "c2-standard-4"
-      static_node_count    = 3
-      max_node_count       = 3
+      static_node_count    = 9
+      max_node_count       = 9
       zone                 = var.zone
       image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
       image_hyperthreads   = true
