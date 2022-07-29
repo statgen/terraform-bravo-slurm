@@ -32,7 +32,13 @@ locals {
     remote_mount  = var.input_vcfs_bucket
     local_mount   = "/mnt/vcfs"
     fs_type       = "gcsfuse"
-    mount_options = "file_mode=766,dir_mode=777,allow_other,_netdev,billing_project=genome-variant-server"
+    mount_options = "file_mode=555,dir_mode=444,allow_other,_netdev,billing_project=genome-variant-server"
+  },{
+    server_ip     = null
+    remote_mount  = var.input_vcfs_bucket
+    local_mount   = "/mnt/crams"
+    fs_type       = "gcsfuse"
+    mount_options = "file_mode=555,dir_mode=444,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
   }]
 
   partitions = [

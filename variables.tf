@@ -31,6 +31,11 @@ variable "input_vcfs_bucket" {
   type        = string
 }
 
+variable "crams_1000g_bucket" {
+  description = "GCP requestor pays bucket with source CRAM files."
+  type        = string
+}
+
 # Placeholders for vars of modules passed verbatim
 #   See io.tf of modules for full description.
 variable "cluster_name" {}
