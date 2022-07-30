@@ -26,19 +26,19 @@ locals {
     remote_mount  = var.results_bucket
     local_mount   = "/mnt/results"
     fs_type       = "gcsfuse"
-    mount_options = "file_mode=766,dir_mode=777,allow_other,_netdev"
+    mount_options = "file_mode=777,dir_mode=777,allow_other,_netdev"
   },{
     server_ip     = null
     remote_mount  = var.input_vcfs_bucket
     local_mount   = "/mnt/vcfs"
     fs_type       = "gcsfuse"
-    mount_options = "file_mode=555,dir_mode=444,allow_other,_netdev,billing_project=genome-variant-server"
+    mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
   },{
     server_ip     = null
-    remote_mount  = var.input_vcfs_bucket
+    remote_mount  = var.crams_1000g_bucket
     local_mount   = "/mnt/crams"
     fs_type       = "gcsfuse"
-    mount_options = "file_mode=555,dir_mode=444,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
+    mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
   }]
 
   partitions = [
