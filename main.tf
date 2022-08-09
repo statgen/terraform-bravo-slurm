@@ -44,7 +44,7 @@ locals {
   partitions = [
     { name                 = "bravo"
       machine_type         = "c2-standard-4"
-      static_node_count    = 9
+      static_node_count    = 2
       max_node_count       = 9
       zone                 = var.zone
       image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
@@ -56,7 +56,7 @@ locals {
       gpu_count            = 0
       gpu_type             = null
       network_storage      = []
-      preemptible_bursting = false
+      preemptible_bursting = "spot"
       vpc_subnet           = data.google_compute_subnetwork.slurm_subnet.self_link
       exclusive            = false
       enable_placement     = false
@@ -133,7 +133,7 @@ module "slurm_cluster_controller" {
   # secondary_disk_size           = var.controller_secondary_disk_size
   # secondary_disk_type           = var.controller_secondary_disk_type
   # shared_vpc_host_project       = var.shared_vpc_host_project
-  scopes                          = ["cloud-platform", "monitoring-write","logging-write","storage-rw"]
+  scopes                          = ["cloud-platform", "compute-rw", "monitoring-write","logging-write","storage-rw"]
   # service_account               = var.controller_service_account
 
   subnet_depend                 = data.google_compute_subnetwork.slurm_subnet.self_link
