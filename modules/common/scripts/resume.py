@@ -78,13 +78,7 @@ def create_instance(compute, instance_def, node_list, placement_group_name):
 
         # Specify a network interface
         'networkInterfaces': [{
-            'subnetwork': (
-                "projects/{}/regions/{}/subnetworks/{}".format(
-                    cfg.shared_vpc_host_project or cfg.project,
-                    instance_def.region,
-                    (instance_def.vpc_subnet
-                     or f'{cfg.cluster_name}-{instance_def.region}'))
-            ),
+            'subnetwork': instance_def.vpc_subnet
         }],
 
         'tags': {'items': ['compute']},
