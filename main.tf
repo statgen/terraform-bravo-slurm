@@ -118,7 +118,10 @@ module "slurm_cluster_controller" {
   project                       = var.project
   region                        = local.region
 
-  # compute_node_scopes           = var.compute_node_scopes
+  compute_node_scopes = ["https://www.googleapis.com/auth/monitoring.write", 
+                         "https://www.googleapis.com/auth/logging.write",
+                         "https://www.googleapis.com/auth/devstorage.read_write"]
+
   # compute_node_service_account  = var.compute_node_service_account
   # disable_compute_public_ips    = var.disable_compute_public_ips
   # disable_controller_public_ips = var.disable_controller_public_ips
