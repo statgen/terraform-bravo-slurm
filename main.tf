@@ -39,7 +39,14 @@ locals {
     local_mount   = "/mnt/crams"
     fs_type       = "gcsfuse"
     mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
+  },{
+    server_ip     = null
+    remote_mount  = "bravo-crams-testing"
+    local_mount   = "/mnt/crams_test"
+    fs_type       = "gcsfuse"
+    mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs"
   }]
+
 
   partitions = [
     { name                 = "bravo"
