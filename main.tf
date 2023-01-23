@@ -54,10 +54,10 @@ locals {
       static_node_count    = 1
       max_node_count       = 1
       zone                 = var.zone
-      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-v5-slurm-22-05-6-debian-10"
       image_hyperthreads   = true
       compute_disk_type    = "pd-standard"
-      compute_disk_size_gb = 20
+      compute_disk_size_gb = 42
       compute_labels       = {}
       cpu_platform         = null
       gpu_count            = 0
@@ -74,12 +74,12 @@ locals {
     { name                 = "highcpu"
       machine_type         = "n1-highcpu-8"
       static_node_count    = 0
-      max_node_count       = 40
+      max_node_count       = 42
       zone                 = var.zone
-      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-v5-slurm-22-05-6-debian-10"
       image_hyperthreads   = true
       compute_disk_type    = "pd-standard"
-      compute_disk_size_gb = 20
+      compute_disk_size_gb = 42
       compute_labels       = {}
       cpu_platform         = null
       gpu_count            = 0
@@ -98,10 +98,10 @@ locals {
       static_node_count    = 0
       max_node_count       = 80
       zone                 = var.zone
-      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-v5-slurm-22-05-6-debian-10"
       image_hyperthreads   = true
       compute_disk_type    = "pd-standard"
-      compute_disk_size_gb = 20
+      compute_disk_size_gb = 42
       compute_labels       = {}
       cpu_platform         = null
       gpu_count            = 0
@@ -176,6 +176,7 @@ module "slurm_cluster_controller" {
   # compute_node_service_account  = var.compute_node_service_account
   # disable_compute_public_ips    = var.disable_compute_public_ips
   # disable_controller_public_ips = var.disable_controller_public_ips
+  disable_controller_public_ips = false
   labels                          = var.controller_labels
 
   # login_network_storage         = var.login_network_storage
@@ -217,8 +218,8 @@ module "slurm_cluster_controller" {
 module "slurm_cluster_login" {
   source = "./modules/login"
 
-  # boot_disk_size            = var.login_disk_size_gb
-  # boot_disk_type            = var.login_disk_type
+  boot_disk_size            = var.login_disk_size_gb
+  boot_disk_type            = var.login_disk_type
   image                     = var.login_image
   # instance_template         = var.login_instance_template
   cluster_name              = var.cluster_name

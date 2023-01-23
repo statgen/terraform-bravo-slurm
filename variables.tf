@@ -44,7 +44,7 @@ variable "controller_machine_type" {}
 variable "controller_image"        {
   description = "VM image for controller machine"
   type = string
-  default = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+  default = "projects/schedmd-slurm-public/global/images/family/schedmd-v5-slurm-22-05-6-debian-10"
 }
 variable "controller_disk_type"    {}
 variable "controller_disk_size_gb" {}
@@ -55,7 +55,7 @@ variable "login_node_count"   {}
 variable "login_image"        {
   description = "VM image for login machine"
   type = string
-  default = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+  default = "projects/schedmd-slurm-public/global/images/family/schedmd-v5-slurm-22-05-6-debian-10"
 }
 variable "login_disk_type"    {}
 variable "login_disk_size_gb" {}
