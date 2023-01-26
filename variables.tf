@@ -32,7 +32,22 @@ variable "input_vcfs_bucket" {
 }
 
 variable "crams_1000g_bucket" {
-  description = "GCP requestor pays bucket with source CRAM files."
+  description = "GCP requestor pays bucket with source CRAM files for 1000 genomes samples."
+  type        = string
+}
+
+variable "crams_topmed_bucket" {
+  description = "GCP requestor pays bucket with source CRAM files from TOPMED."
+  type        = string
+}
+
+variable "crams_ccdg_bucket" {
+  description = "GCP requestor pays bucket with source CRAM files from CCDG."
+  type        = string
+}
+
+variable "crams_ccdg_tmp_bucket" {
+  description = "GCP requestor pays bucket with source CRAM files from CCDG."
   type        = string
 }
 
