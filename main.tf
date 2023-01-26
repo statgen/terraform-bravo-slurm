@@ -12,9 +12,7 @@ locals {
     remote_mount  = data.tfe_outputs.slurm_network.values.filestore_name_home
     local_mount   = "/home"
     fs_type       = "nfs"
-    #mount_options = "hard,timeo=600,retrans=3,rsize=1048576,wsize=1048576,resvport,async"
-    mount_options = null
-
+    mount_options = "hard,timeo=600,retrans=3,rsize=1048576,wsize=1048576,resvport,async"
   },{
     server_ip     = data.tfe_outputs.slurm_network.values.filestore_ip_app
     remote_mount  = data.tfe_outputs.slurm_network.values.filestore_name_app
@@ -36,15 +34,27 @@ locals {
   },{
     server_ip     = null
     remote_mount  = var.crams_1000g_bucket
-    local_mount   = "/mnt/crams"
+    local_mount   = "/mnt/crams_1000g"
     fs_type       = "gcsfuse"
     mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
   },{
     server_ip     = null
-    remote_mount  = "bravo-crams-testing"
-    local_mount   = "/mnt/crams_test"
+    remote_mount  = var.crams_topmed_bucket
+    local_mount   = "/mnt/crams_topmed"
     fs_type       = "gcsfuse"
-    mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs"
+    mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
+  },{
+    server_ip     = null
+    remote_mount  = var.crams_ccdg_bucket
+    local_mount   = "/mnt/crams_ccdg"
+    fs_type       = "gcsfuse"
+    mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
+  },{
+    server_ip     = null
+    remote_mount  = var.crams_ccdg_tmp_bucket
+    local_mount   = "/mnt/crams_ccdg_tmp"
+    fs_type       = "gcsfuse"
+    mount_options = "file_mode=444,dir_mode=555,allow_other,_netdev,implicit_dirs,billing_project=genome-variant-server"
   }]
 
 
@@ -102,6 +112,94 @@ locals {
       image_hyperthreads   = true
       compute_disk_type    = "pd-standard"
       compute_disk_size_gb = 20
+      compute_labels       = {}
+      cpu_platform         = null
+      gpu_count            = 0
+      gpu_type             = null
+      network_storage      = []
+      preemptible_bursting = "spot"
+      vpc_subnet           = data.google_compute_subnetwork.slurm_subnet.self_link
+      exclusive            = false
+      enable_placement     = false
+      regional_capacity    = false
+      regional_policy      = {}
+      instance_template    = null
+    },
+    { name                 = "annotate_q"
+      machine_type         = "n1-highcpu-16"
+      static_node_count    = 0
+      max_node_count       = 80
+      zone                 = var.zone
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+      image_hyperthreads   = true
+      compute_disk_type    = "pd-standard"
+      compute_disk_size_gb = 20
+      compute_labels       = {}
+      cpu_platform         = null
+      gpu_count            = 0
+      gpu_type             = null
+      network_storage      = []
+      preemptible_bursting = "spot"
+      vpc_subnet           = data.google_compute_subnetwork.slurm_subnet.self_link
+      exclusive            = false
+      enable_placement     = false
+      regional_capacity    = false
+      regional_policy      = {}
+      instance_template    = null
+    },
+    { name                 = "small_jobs_q"
+      machine_type         = "c2d-highcpu-8"
+      static_node_count    = 0
+      max_node_count       = 80
+      zone                 = var.zone
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+      image_hyperthreads   = true
+      compute_disk_type    = "pd-standard"
+      compute_disk_size_gb = 20
+      compute_labels       = {}
+      cpu_platform         = null
+      gpu_count            = 0
+      gpu_type             = null
+      network_storage      = []
+      preemptible_bursting = "spot"
+      vpc_subnet           = data.google_compute_subnetwork.slurm_subnet.self_link
+      exclusive            = false
+      enable_placement     = false
+      regional_capacity    = false
+      regional_policy      = {}
+      instance_template    = null
+    },
+    { name                 = "vep_q"
+      machine_type         = "n1-highmem-8"
+      static_node_count    = 0
+      max_node_count       = 140
+      zone                 = var.zone
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+      image_hyperthreads   = true
+      compute_disk_type    = "pd-standard"
+      compute_disk_size_gb = 20
+      compute_labels       = {}
+      cpu_platform         = null
+      gpu_count            = 0
+      gpu_type             = null
+      network_storage      = []
+      preemptible_bursting = "spot"
+      vpc_subnet           = data.google_compute_subnetwork.slurm_subnet.self_link
+      exclusive            = false
+      enable_placement     = false
+      regional_capacity    = false
+      regional_policy      = {}
+      instance_template    = null
+    },
+    { name                 = "merge_q"
+      machine_type         = "n2-highcpu-2"
+      static_node_count    = 0
+      max_node_count       = 4
+      zone                 = var.zone
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+      image_hyperthreads   = true
+      compute_disk_type    = "pd-ssd"
+      compute_disk_size_gb = 500
       compute_labels       = {}
       cpu_platform         = null
       gpu_count            = 0
