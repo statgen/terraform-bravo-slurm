@@ -278,7 +278,7 @@ module "slurm_cluster_controller" {
 
   # login_network_storage         = var.login_network_storage
   # login_node_count              = var.login_node_count
-  # machine_type                  = var.controller_machine_type
+  machine_type                  = var.controller_machine_type
   # munge_key                     = var.munge_key
   # jwt_key                       = var.jwt_key
   # secondary_disk                = var.controller_secondary_disk
@@ -325,7 +325,7 @@ module "slurm_cluster_login" {
   # disable_login_public_ips  = var.disable_login_public_ips
   labels                    = var.login_labels
   # login_network_storage     = var.login_network_storage
-  # machine_type              = var.login_machine_type
+  machine_type              = var.login_machine_type
   node_count                = var.login_node_count
   region                    = local.region
   # scopes                    = var.login_node_scopes
