@@ -193,8 +193,8 @@ locals {
     },
     { name                 = "merge_q"
       machine_type         = "n2-highcpu-2"
-      static_node_count    = 0
-      max_node_count       = 4
+      static_node_count    = 2
+      max_node_count       = 22
       zone                 = var.zone
       image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
       image_hyperthreads   = true
