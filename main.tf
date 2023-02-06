@@ -193,13 +193,35 @@ locals {
     },
     { name                 = "merge_q"
       machine_type         = "n2-highcpu-2"
-      static_node_count    = 2
+      static_node_count    = 0
       max_node_count       = 22
       zone                 = var.zone
       image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
       image_hyperthreads   = true
       compute_disk_type    = "pd-ssd"
-      compute_disk_size_gb = 500
+      compute_disk_size_gb = 20
+      compute_labels       = {}
+      cpu_platform         = null
+      gpu_count            = 0
+      gpu_type             = null
+      network_storage      = []
+      preemptible_bursting = "spot"
+      vpc_subnet           = data.google_compute_subnetwork.slurm_subnet.self_link
+      exclusive            = false
+      enable_placement     = false
+      regional_capacity    = false
+      regional_policy      = {}
+      instance_template    = null
+    },
+    { name                 = "agg_q"
+      machine_type         = "n2-highmem-8"
+      static_node_count    = 0
+      max_node_count       = 40
+      zone                 = var.zone
+      image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
+      image_hyperthreads   = true
+      compute_disk_type    = "pd-standard"
+      compute_disk_size_gb = 20
       compute_labels       = {}
       cpu_platform         = null
       gpu_count            = 0
