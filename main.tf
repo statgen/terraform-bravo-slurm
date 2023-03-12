@@ -199,7 +199,7 @@ locals {
       image                = "projects/schedmd-slurm-public/global/images/family/schedmd-slurm-21-08-6-debian-10"
       image_hyperthreads   = true
       compute_disk_type    = "pd-ssd"
-      compute_disk_size_gb = 20
+      compute_disk_size_gb = 60
       compute_labels       = {}
       cpu_platform         = null
       gpu_count            = 0
